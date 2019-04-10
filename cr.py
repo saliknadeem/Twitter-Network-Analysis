@@ -6,7 +6,6 @@ import csv
 import itertools
 import pandas as pd
 import numpy as np
-
 from collections import Counter
 from collections import defaultdict
 
@@ -23,18 +22,17 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth,wait_on_rate_limit=True)
 
-# Open/Create a file to append data
-csvFile = open('data/ua.csv', 'w', newline='')
+# Open/Create a file to write data
+csvFile = open('data/tweets.csv', 'w', newline='')
 #Use csv Writer
 csvWriter = csv.writer(csvFile)
 
-tagList = []
-urlList = []
-userList = []
-userSNList = []
-tweets = 0
-index=1
 
+tagList = [] #List of Hashtags
+urlList = [] #List of URLs in tweets
+userList = [] #List of user IDs with matching tweets
+userSNList = [] #List of user Screen_names with matching tweets
+tweets = 0 # Tweet Counter
 
 def paginate(iterable, page_size):
     while True:
@@ -49,19 +47,15 @@ def paginate(iterable, page_size):
 
 
 
-
-
-
-
 csvWriter.writerow(["user ID", "Username", "Location", "Date", "Tweet"])
 
 
-for tweet in tweepy.Cursor(api.search,q="#Pakista", lang="en",tweet_mode='extended').items():
+for tweet in tweepy.Cursor(api.search,q="#ohlalala", lang="en",tweet_mode='extended').items():
     for attrH in tweet.entities["hashtags"]:
     ###    print(attrH['text'])
         tagList.append(attrH['text'])
     ###for attrU in tweet.entities["urls"]: #URL fetching code
-	###    print(attrU["expanded_url"])
+    ###    print(attrU["expanded_url"])
     ###    urlList.append(attrU["expanded_url"])
     #print("ID: ",tweet.user.id," - Screen_name: ",tweet.user.screen_name, " - location: ",tweet.user.location.encode('utf-8') )
     userList.append(tweet.user.id)
@@ -77,14 +71,22 @@ for tweet in tweepy.Cursor(api.search,q="#Pakista", lang="en",tweet_mode='extend
     if tweets % 50 == 0:
         print(tweets,'\n')
     csvWriter.writerow([tweet.user.id, tweet.user.screen_name, tweet.user.location.encode('utf-8'), tweet.created_at, tweet.full_text.encode('utf-8')])
-    index = index+1
+
 
 #friends = tweepy.Cursor(api.followers_ids(userList))
 #print("followers -- ", friends)
 
+csvFile.close()
 
 
-friendList = defaultdict(list)
+
+# Open/Create a file to write data
+csvFile = open('data/users.csv', 'w', newline='')
+#Use csv Writer
+csvWriter = csv.writer(csvFile)
+
+
+friendList = defaultdict(list) # List of friends of the Users who Tweeted
 
 print("user list----",len(userSNList))
 print('Starting getting Friends Lists')
@@ -93,13 +95,29 @@ for user in userSNList:
     print('Starting pagination')
     for page in paginate(followers, 100):
         results = api.lookup_users(user_ids=page)
-        friendList[user].append(page)
+        for friend in page:
+        # print('page-----------------',page)
+            friendList.setdefault(user,[]).append(friend)
+            csvWriter.writerow([user.encode('utf-8'),friend])
         #print('\n\nuser: ', user ,'---- friends=',page)
         ##for result in results:
         ##    print ("friend - ",result.screen_name, "user - ",user)
-		
+
+
 print("---------------------------------------------------\n",friendList,"\n-----------------------------------------------------------------------\n")
-	
+
+# print(friendList.items())
+
+csvFile.close()
+
+
+for k, v in Counter(friendList).items():
+    print(k, len(v))
+
+
+
+
+
 
 print('\n\n\n')
 print(Counter(tagList),'\n')
@@ -108,12 +126,9 @@ print('Tweets=',tweets,'\n')
 
 
 
-csvFile.close()
+
 
 
 twData = pd.read_csv('data/ua.csv')
 
 print(twData.head())
-
-
-
