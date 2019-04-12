@@ -7,7 +7,7 @@ import numpy as np
 
 
 from geopy.geocoders import Nominatim
-# from geopy.exc import GeocoderTimedOut
+from geopy.exc import GeocoderTimedOut
 from geopy.exc import GeopyError
 
 
@@ -20,8 +20,8 @@ from geopy.exc import GeopyError
 import plotly
 plotly.tools.set_credentials_file(username=config.plotly_username, api_key=config.plotly_api_key)
 
-# searchTweet = "#ONBudget"
-searchTweet = "#pakistan_Zindabad"
+searchTweet = "#ONBudget"
+# searchTweet = "#pakistan_Zindabad"
 
 
 df = pd.read_csv('data/'+searchTweet+'_tweets.csv')
@@ -50,18 +50,22 @@ with pd.option_context('display.max_rows', None, 'display.max_columns', None):
 #         pass
 
 
-
+from geopy.extra.rate_limiter import RateLimiter
+# geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
 #Function used to geocode locations and override timeout error
 def do_geocode(address):
-    geopy = Nominatim(timeout=3)
+    geolocator = Nominatim(timeout=5)
     try:
-        return geopy.geocode(address,exactly_one=True)
+        print("trying")
+        return RateLimiter(geolocator.geocode(address,exactly_one=True), min_delay_seconds=5)
+        # return geopy.geocode(address,exactly_one=True,timeout=None)
     except GeocoderTimedOut:
+        print("exception")
         return do_geocode(address)
 
 #Creating Geocoded Location column
 df['GeocodedLocation']=df['Location'].apply(lambda x: do_geocode(x) if x != None else None)
-
+print("done geocoding")
 
 #Create the Latitude Column
 lat=[]
