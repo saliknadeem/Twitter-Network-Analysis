@@ -8,6 +8,9 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 from collections import defaultdict
+import time
+from datetime import datetime
+from scipy.special import comb
 
 ##input your credentials here
 consumer_key = config.consumer_key
@@ -15,12 +18,21 @@ consumer_secret = config.consumer_secret
 access_token = config.access_token
 access_token_secret = config.access_token_secret
 
+
+
+startTime = time.time()
+
+
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
 
-searchTweet = "#ONBudget"
-getUserData = 0
+# searchTweet = "#ONBudget"
+searchTweet = "#Ontario"
+# searchTweet = "#ONTechU"
+# searchTweet = "#UOIT"
+# searchTweet = "#pakistan_Zindabad"
+getUserData = 1
 
 
 
@@ -89,11 +101,16 @@ csvFile.close()
 
 
 
+total = comb(len(userSN_ID.keys()), 2, exact=False)
 
 if (getUserData):
-    csvFile = open('data/'+searchTweet+'_users.csv', 'w', newline='')
+
+    csvFile = open('data/'+searchTweet+'_users.csv', 'w', newline='',encoding='utf8')
     #Use csv Writer
+
     csvWriter = csv.writer(csvFile)
+
+    csvWriter.writerow(["Source", "Target"])
 
     iter=0
     print("total unique people = ",len(userSN_ID.keys()))
@@ -104,14 +121,14 @@ if (getUserData):
         link = api.show_friendship(source_screen_name=key1, target_screen_name=key2)
         # print(link[0].following,link[0].followed_by)
         if (link[0].followed_by):
-            print(key1,"->",key2)
-            csvWriter.writerow([key1.encode('utf-8'),key2.encode('utf-8')])
+            # print(key1,"->",key2)
+            csvWriter.writerow([key1,key2])
         if (link[1].followed_by):
-            print(key2,"->",key1)
-            csvWriter.writerow([key2.encode('utf-8'),key1.encode('utf-8')])
+            # print(key2,"->",key1)
+            csvWriter.writerow([key2,key1])
         iter = iter+1
         if iter % 20 == 0:
-            print("Friends searched = ",iter)
+            print("Friends left = ",total-iter)
 
     # print("---------------------------------------------------\n",followersList,"\n-----------------------------------------------------------------------\n")
     csvFile.close()
@@ -156,6 +173,10 @@ print(Counter(tagList),'\n')
 # print(Counter(urlList),'\n')
 
 
+
+endTime = time.time()
+
+print("running time= ",endTime-startTime)
 
 
 # twData = pd.read_csv('data/ua.csv')
