@@ -28,12 +28,12 @@ auth.set_access_token(access_token, access_token_secret)
 
 
 # searchTweet = "#ONBudget"
-searchTweet = "#Ontario"
+searchTweet = "#OntarioTech"
 # searchTweet = "#ONTechU"
 # searchTweet = "#UOIT"
 # searchTweet = "#pakistan_Zindabad"
-getUserData = 1
-
+getUserData = 0
+tweetLimit = 5000
 
 
 api = tweepy.API(auth,wait_on_rate_limit=True) ##Free API issues, need to wait on rate limit
@@ -67,11 +67,13 @@ def paginate(iterable, page_size):
 csvWriter.writerow(["user ID", "Username", "Location", "Date", "Tweet","ReTweeted","hashtags","URLs","followers","friends"])
 
 rtCheck = 0
-for tweet in tweepy.Cursor(api.search,q=searchTweet, lang="en",tweet_mode='extended').items():
+RTCounter = 0
+
+for tweet in tweepy.Cursor(api.search,q=searchTweet, lang="en",tweet_mode='extended').items(tweetLimit):
     for attrH in tweet.entities["hashtags"]:
     ###    print(attrH['text'])
-        tagList.append(attrH['text'].encode("utf-8"))
-        currTagList.append(attrH['text'].encode("utf-8"))
+        tagList.append(attrH['text'])
+        currTagList.append(attrH['text'])
     for attrU in tweet.entities["urls"]: #URL fetching code
        urlList.append(attrU["expanded_url"])
        currurlList.append(attrU["expanded_url"])
@@ -80,6 +82,7 @@ for tweet in tweepy.Cursor(api.search,q=searchTweet, lang="en",tweet_mode='exten
     userSN_ID[tweet.user.screen_name] = tweet.user.id
     if tweet.full_text.startswith('RT @'):
         rtCheck = 1
+        RTCounter = RTCounter + 1
     else:
         rtCheck = 0
 
@@ -110,7 +113,7 @@ if (getUserData):
 
     csvWriter = csv.writer(csvFile)
 
-    csvWriter.writerow(["Source", "Target"])
+    csvWriter.writerow(["source", "target"])
 
     iter=0
     print("total unique people = ",len(userSN_ID.keys()))

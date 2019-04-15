@@ -28,10 +28,10 @@ plotly.tools.set_credentials_file(username=config.plotly_username, api_key=confi
 startTime = time.time()
 
 
-searchTweet = "#ONBudget"
+searchTweet = "#OntarioTech"
+# searchTweet = "#ONBudget"
 # searchTweet = "#pakistan_Zindabad"
-getGeoData = 0
-
+getGeoData = 1
 
 
 df = pd.read_csv('data/'+searchTweet+'_tweets.csv')
@@ -77,8 +77,8 @@ if (getGeoData):
     # print(locationDictCoord)
     print("number of keys without diplicates = ",len(locationDictCoord.keys()))
 
-    df['latitude'] = np.nan
-    df['longitude'] = np.nan
+    df['Latitude'] = np.nan
+    df['Longitude'] = np.nan
 
     for keys in locationDictCoord.keys():
         # print("keys =", keys)
@@ -89,8 +89,8 @@ if (getGeoData):
             for ind in locationDict[keys]:
                 # print(ind)
                 # print("---------",locationDictCoord[keys][0])
-                df.loc[ind,'latitude'] = locationDictCoord[keys][0]
-                df.loc[ind,'longitude'] = locationDictCoord[keys][1]
+                df.loc[ind,'Latitude'] = locationDictCoord[keys][0]
+                df.loc[ind,'Longitude'] = locationDictCoord[keys][1]
 
 
     # print(df.loc[:, ['Location', 'latitude','longitude']])
@@ -151,12 +151,37 @@ if (getGeoData):
 
 
 
-
-
-
 endTime = time.time()
 
 print("running time= ",endTime-startTime)
+
+
+
+#
+# filename = 'name'
+# from flask import Flask, render_template
+#
+# app = Flask(__name__)
+#
+# @app.route("/")
+# def home():
+#     return render_template("index.html")
+#
+# @app.route('/analysis')
+# def analysis():
+#     x = df
+#     y = searchTweet
+#     return render_template("analysis.html", data=x.to_html(index=False,border=False,classes='table table-responsive-sm table-sm table-striped'), name = y)
+#
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
+
+
+
+
+
+
 
 
 
