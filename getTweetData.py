@@ -33,7 +33,7 @@ searchTweet = "#OntarioTech"
 # searchTweet = "#UOIT"
 # searchTweet = "#pakistan_Zindabad"
 getUserData = 0
-tweetLimit = 5000
+tweetLimit = 1000
 
 
 api = tweepy.API(auth,wait_on_rate_limit=True) ##Free API issues, need to wait on rate limit
@@ -86,7 +86,7 @@ for tweet in tweepy.Cursor(api.search,q=searchTweet, lang="en",tweet_mode='exten
     else:
         rtCheck = 0
 
-    # print("---------------------------------------------------\n",tweet.full_text,"\n-----------------------------------------------------------------------\n")
+    # print("------------------------------------\n",tweet.full_text,"\n--------------------------------------\n")
     tweets = tweets+1
     if tweets % 20 == 0:
         print("Tweets searched = ",tweets,'\n')
@@ -133,41 +133,8 @@ if (getUserData):
         if iter % 20 == 0:
             print("Friends left = ",total-iter)
 
-    # print("---------------------------------------------------\n",followersList,"\n-----------------------------------------------------------------------\n")
+    # print("----------------------------------\n",followersList,"\n-------------------------------------\n")
     csvFile.close()
-
-
-###### Old bad code
-##friendList = defaultdict(list) # List of friends of the Users who Tweeted
-## print("user list----",len(userSNList))
-## print('Starting getting Friends Lists')
-## for user in userSNList:
-##     followers = api.followers_ids(screen_name=user)
-##     print('Starting pagination')
-##     for page in paginate(followers, 100):
-##         results = api.lookup_users(user_ids=page)
-##         for friend in page:
-##         # print('page-----------------',page)
-##             friendList.setdefault(user,[]).append(friend)
-##             csvWriter.writerow([user.encode('utf-8'),userSN_ID[user],friend])
-##         #print('\n\nuser: ', user ,'---- friends=',page)
-##         ##for result in results:
-##         ##    print ("friend - ",result.screen_name, "user - ",user)
-
-## for k, v in Counter(friendList).items():
-##     print(k, len(v))
-
-###### CURRENT CODE for finding friends list of users
-# counter=0
-# followersList = []
-# for sn,id in userSN_ID.items():
-#     print('for loop user\n')
-#     for follower in tweepy.Cursor(api.followers, user_id=id).items():
-#         counter=counter+1
-#         followersList.append([id,follower.screen_name,follower.id])
-#         csvWriter.writerow([sn.encode('utf-8'),id,follower.screen_name.encode('utf-8'),follower.id])
-#         print([sn,id,follower.screen_name.encode('utf-8'),follower.id])
-#     print("counter---",counter)
 
 
 
