@@ -102,8 +102,6 @@ csvFile.close()
 # Open/Create a file to write data
 
 
-
-
 total = comb(len(userSN_ID.keys()), 2, exact=False)
 
 if (getUserData):
