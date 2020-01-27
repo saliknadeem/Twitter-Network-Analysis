@@ -12,20 +12,32 @@ import time
 from datetime import datetime
 from scipy.special import comb
 
-##input your credentials here
-consumer_key = config.consumer_key
-consumer_secret = config.consumer_secret
-access_token = config.access_token
-access_token_secret = config.access_token_secret
+
+def connectTwitter():
+    ##input your credentials here
+    try:
+        consumer_key = config.consumer_key
+        consumer_secret = config.consumer_secret
+        access_token = config.access_token
+        access_token_secret = config.access_token_secret
+    except Exception as e:
+        print(e)
+        print("Something is wrong with the config file")
+    
+    try:
+        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        auth.set_access_token(access_token, access_token_secret)
+    except Exception as e:
+        print(e)
+        print("Tweepy authentication failed")
+        
+    return auth
 
 
+   
+auth = connectTwitter()       
 
 startTime = time.time()
-
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-
 
 # searchTweet = "#ONBudget"
 searchTweet = "#OntarioTech"
