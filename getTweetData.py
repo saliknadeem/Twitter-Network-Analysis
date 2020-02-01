@@ -9,6 +9,7 @@ from collections import defaultdict
 import time
 from datetime import datetime
 from scipy.special import comb
+from datetime import date
 
 
 def connectTwitter():
@@ -33,9 +34,9 @@ def getTweetData(searchTweet, tweetLimit,userData):
     startTime = time.time()
 
     api = tweepy.API(auth,wait_on_rate_limit=True) ##Free API issues, need to wait on rate limit
-
+    today = date.today().strftime("%d-%m-%Y")
     # Open/Create a file to write data
-    csvFile = open('data/'+searchTweet+'_tweets.csv', 'w', newline='',encoding='utf8')
+    csvFile = open('data/'+searchTweet+'_'+today+'_Tweets.csv', 'w', newline='',encoding='utf8')
     
     #Use csv Writer
     csvWriter = csv.writer(csvFile)
@@ -110,10 +111,12 @@ def getTweetData(searchTweet, tweetLimit,userData):
     endTime = time.time()
     print("running time= ",endTime-startTime)
 
+    
 
 def getUserData(searchTweet, userSN_ID, api):
-
-        csvFile = open('data/'+searchTweet+'_users.csv', 'w', newline='',encoding='utf8')
+        today = date.today().strftime("%d-%m-%Y")
+        total = comb(len(userSN_ID.keys()), 2, exact=False)
+        csvFile = open('data/'+searchTweet+'_'+today+'_users.csv', 'w', newline='',encoding='utf8')
         #Use csv Writer
 
         csvWriter = csv.writer(csvFile)
@@ -145,13 +148,14 @@ def getUserData(searchTweet, userSN_ID, api):
 
         
         
-userData = 0
+userData = 1
 tweetLimit = 500
 
 # searchTweet = "#ONBudget"
-searchTweet = "#OntarioTech"
+searchTweet = "#OntarioTechu"
 # searchTweet = "#ONTechU"
 # searchTweet = "#UOIT"
-# searchTweet = "#pakistan_Zindabad"    
-     
+# searchTweet = "#pakistan_Zindabad"
+
+
 getTweetData(searchTweet, tweetLimit,userData)
