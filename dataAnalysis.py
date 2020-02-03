@@ -28,7 +28,7 @@ plotly.tools.set_credentials_file(username=config.plotly_username, api_key=confi
 startTime = time.time()
 
 
-searchTweet = "#OntarioTech"
+searchTweet = "#OntarioTechu"
 # searchTweet = "#ONBudget"
 # searchTweet = "#pakistan_Zindabad"
 getGeoData = 1
